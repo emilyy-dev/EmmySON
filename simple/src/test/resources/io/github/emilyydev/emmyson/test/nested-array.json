@@ -1,0 +1,17 @@
+[
+  null,
+  true,
+  false,
+  123,
+  "Hello, world!\n\/\\",
+  [
+    "another array :0",
+    123.456,
+    [
+      "this is getting",
+      "",
+      789.0,
+      "out of hand"
+    ]
+  ]
+]

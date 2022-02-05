@@ -1,0 +1,21 @@
+{
+  "first": null,
+  "second": true,
+  "third": false,
+  "number uwu": 123,
+  "fourth": "Hello, world!\n\/\\",
+  "nested owo": {
+    "first": null,
+    "second": true,
+    "third": false,
+    "number uwu": 123.456,
+    "fourth": "Hello, world!\n\/\\",
+    "nested owo": {
+      "first": null,
+      "second": true,
+      "third": false,
+      "number uwu": 789.0,
+      "fourth": "Hello, world!\n\/\\"
+    }
+  }
+}
