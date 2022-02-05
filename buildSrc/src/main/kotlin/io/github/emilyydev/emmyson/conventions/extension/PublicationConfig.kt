@@ -12,4 +12,6 @@ interface PublicationConfig {
     val linkedJavadocs: ListProperty<String>
 
     fun license(action: Action<in MavenPomLicense>)
+
+    fun configureRepo(isSnapshot: Boolean, username: String, password: String)
 }

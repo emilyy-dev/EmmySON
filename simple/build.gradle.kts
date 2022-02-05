@@ -32,4 +32,9 @@ publicationConfig {
         name.set("LGPL-3.0")
         url.set("https://opensource.org/licenses/LGPL-3.0")
     }
+
+    val isSnapshot = version.toString().endsWith("-SNAPSHOT")
+    val username = findProperty("ossrh.user") as? String ?: return@publicationConfig
+    val password = findProperty("ossrh.password") as? String ?: return@publicationConfig
+    configureRepo(isSnapshot, username, password)
 }

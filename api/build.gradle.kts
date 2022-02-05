@@ -22,4 +22,9 @@ publicationConfig {
         name.set("MIT")
         url.set("https://opensource.org/licenses/mit-license.php")
     }
+
+    val isSnapshot = version.toString().endsWith("-SNAPSHOT")
+    val username = findProperty("ossrh.user") as? String ?: return@publicationConfig
+    val password = findProperty("ossrh.password") as? String ?: return@publicationConfig
+    configureRepo(isSnapshot, username, password)
 }

@@ -105,7 +105,7 @@ public interface DataType<T extends JsonData> extends Examinable, Serializable {
    * Gets a predicate that tests if a provided {@link JsonData} can safely be used in the function returned by
    * {@link #mapper()}.
    *
-   * @return A predicate that asserts whether or not the given {@link JsonData} is mappable to this type
+   * @return a predicate that asserts whether or not the given {@link JsonData} is mappable to this type
    */
   default Predicate<? super JsonData> predicate() {
     return type()::isInstance;

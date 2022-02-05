@@ -41,7 +41,7 @@ publishing {
         }
     }
 
-    val publicationConfig = PublicationConfigImpl(mavenJava, objects.listProperty(String::class))
+    val publicationConfig = PublicationConfigImpl(repositories, mavenJava, objects.listProperty(String::class))
     extensions.add(PublicationConfig::class, "publicationConfig", publicationConfig)
 
     tasks {
@@ -56,20 +56,5 @@ publishing {
 
     signing {
         sign(mavenJava)
-    }
-
-    repositories {
-        maven {
-            val releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            val snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            url = if (project.version.toString().endsWith("-SNAPSHOT")) snapshotsUrl else releasesUrl
-
-            val repoUsername = findProperty("ossrh.user") as? String ?: return@maven
-            val repoPassword = findProperty("ossrh.password") as? String ?: return@maven
-            credentials {
-                username = repoUsername
-                password = repoPassword
-            }
-        }
     }
 }
