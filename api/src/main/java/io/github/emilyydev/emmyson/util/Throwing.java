@@ -24,6 +24,9 @@
 
 package io.github.emilyydev.emmyson.util;
 
+/**
+ * Utility class for throwing functional interfaces.
+ */
 public final class Throwing {
 
   @SuppressWarnings("unchecked")
@@ -33,6 +36,9 @@ public final class Throwing {
 
   private Throwing() { }
 
+  /**
+   * Extension of {@link java.lang.Runnable} that allows for throwing exceptions.
+   */
   @FunctionalInterface
   public interface Runnable extends java.lang.Runnable {
 
@@ -48,6 +54,12 @@ public final class Throwing {
     }
   }
 
+  /**
+   * Extension of {@link java.util.function.Function} that allows for throwing exceptions.
+   *
+   * @param <T> the function input type
+   * @param <R> the function output type
+   */
   @FunctionalInterface
   public interface Function<T, R> extends java.util.function.Function<T, R> {
 
@@ -63,6 +75,11 @@ public final class Throwing {
     }
   }
 
+  /**
+   * Extension of {@link java.util.function.Predicate} that allows for throwing exceptions.
+   *
+   * @param <T> the input type to test
+   */
   @FunctionalInterface
   public interface Predicate<T> extends java.util.function.Predicate<T> {
 
@@ -78,6 +95,11 @@ public final class Throwing {
     }
   }
 
+  /**
+   * Extension of {@link java.util.function.Consumer} that allows for throwing exceptions.
+   *
+   * @param <T> the input type
+   */
   @FunctionalInterface
   public interface Consumer<T> extends java.util.function.Consumer<T> {
 
@@ -93,6 +115,11 @@ public final class Throwing {
     }
   }
 
+  /**
+   * Extension of {@link java.util.function.Supplier} that allows for throwing exceptions.
+   *
+   * @param <T> the output type to produce
+   */
   @FunctionalInterface
   public interface Supplier<T> extends java.util.function.Supplier<T> {
 

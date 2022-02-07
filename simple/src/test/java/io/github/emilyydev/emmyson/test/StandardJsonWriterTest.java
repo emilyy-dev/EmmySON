@@ -78,6 +78,11 @@ public class StandardJsonWriterTest implements AbstractStandardTest {
   }
 
   @Test
+  public void write_string_funnyNonAsciiCharacters() throws IOException {
+    assertWriteEquals("\" abc123~\\u00b1\\u03b1\"", FACTORY.string(" abc123~±α"));
+  }
+
+  @Test
   public void write_array_empty() throws IOException {
     assertWriteEquals("[]", FACTORY.arrayOf());
   }

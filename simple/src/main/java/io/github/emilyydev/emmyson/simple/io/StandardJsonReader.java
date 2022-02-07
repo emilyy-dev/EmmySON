@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 
-import static io.github.emilyydev.emmyson.simple.CharStringStuffDoNotTouch.codePointToString;
+import static io.github.emilyydev.emmyson.simple.CodePointToString.codePointToString;
 
 public final class StandardJsonReader implements JsonReader {
 

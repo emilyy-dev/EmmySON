@@ -22,6 +22,9 @@
 // SOFTWARE.
 //
 
+/**
+ *
+ */
 @SuppressWarnings("requires-transitive-automatic")
 module io.github.emilyydev.emmyson {
 

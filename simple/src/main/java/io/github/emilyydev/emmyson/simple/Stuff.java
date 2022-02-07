@@ -149,7 +149,37 @@ public interface Stuff {
           return;
         }
       }
-      out.write(codePoint);
+
+      if (' ' <= codePoint && '~' >= codePoint) {
+        out.write(codePoint);
+      } else {
+        writeEscapedCodePoint(codePoint, out);
+      }
+    }
+
+    private static void writeEscapedCodePoint(final int codePoint, final Writer out) throws IOException {
+      out.write(BACKSLASH.codePoint);
+      out.write('u');
+      out.write(codePointToHex(codePoint));
+    }
+
+    private static char[] codePointToHex(int codePoint) {
+      final char[] buffer = new char[4];
+      for (int i = 3; i >= 0; --i) {
+        buffer[i] = singleHexChar(codePoint % 16);
+        codePoint /= 16;
+      }
+      return buffer;
+    }
+
+    private static char singleHexChar(final int i) {
+      if (0 <= i && 10 > i) {
+        return (char) ('0' + i);
+      } else if (10 <= i && 16 > i) {
+        return (char) ('a' + i - 10);
+      } else {
+        return '0';
+      }
     }
 
     public static boolean readMatching(final int control, final StringBuilder buffer) {

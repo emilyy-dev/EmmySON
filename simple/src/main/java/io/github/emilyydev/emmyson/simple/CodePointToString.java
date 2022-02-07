@@ -18,7 +18,7 @@
 
 package io.github.emilyydev.emmyson.simple;
 
-public final class CharStringStuffDoNotTouch {
+public final class CodePointToString {
 
   public static String codePointToString(final int codePoint) {
     return String.valueOf(Character.toChars(codePoint));

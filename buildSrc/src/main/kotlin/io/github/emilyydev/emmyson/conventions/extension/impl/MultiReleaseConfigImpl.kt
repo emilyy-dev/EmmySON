@@ -20,10 +20,6 @@ class MultiReleaseConfigImpl(
 
     private val addedVersions: MutableSet<Int> = mutableSetOf()
 
-    override fun addLanguageVersions(versions: Iterable<Int>) = versions.forEach(::addLanguageVersion)
-
-    override fun addLanguageVersions(versions: Sequence<Int>) = versions.forEach(::addLanguageVersion)
-
     override fun addLanguageVersion(version: Int) {
         // don't do anything if it was already added
         if (!addedVersions.add(version)) {
