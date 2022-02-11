@@ -131,6 +131,11 @@ public class StandardJsonReaderTest implements AbstractStandardTest {
   }
 
   @Test
+  public void read_string_funnyNonAsciiCharacters() throws IOException {
+    assertReadEquals(FACTORY.string(" abc123~±α👨‍🦲"), "\" abc123~\\u00b1\\u03b1\\ud83d\\udc68\\u200d\\ud83e\\uddb2\"");
+  }
+
+  @Test
   public void read_invalidString() {
     assertThrows(JsonParseException.class, () -> {
       try (final JsonReader reader = FACTORY.createReader("\"invalid")) {

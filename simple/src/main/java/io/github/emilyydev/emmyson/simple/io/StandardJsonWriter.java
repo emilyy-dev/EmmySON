@@ -93,7 +93,7 @@ public final class StandardJsonWriter implements JsonWriter {
   public void write(final JsonString jsonString) throws IOException {
     this.out.write(Tokens.QUOTE);
 
-    final PrimitiveIterator.OfInt iterator = jsonString.codePoints().iterator();
+    final PrimitiveIterator.OfInt iterator = jsonString.chars().iterator();
     while (iterator.hasNext()) {
       Escapable.writeMatchingOrWrite(iterator.nextInt(), this.out);
     }
