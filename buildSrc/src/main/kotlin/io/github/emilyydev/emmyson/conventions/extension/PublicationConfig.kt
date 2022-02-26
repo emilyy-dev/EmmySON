@@ -9,7 +9,7 @@ interface PublicationConfig {
 
     val name: Property<String>
     val description: Property<String>
-    val linkedJavadocs: ListProperty<String>
+    val linkedJavadoc: ListProperty<String>
 
     fun license(action: Action<in MavenPomLicense>)
 

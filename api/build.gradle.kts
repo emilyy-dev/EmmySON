@@ -13,10 +13,10 @@ dependencies {
 publicationConfig {
     name.set("EmmySON API")
     description.set("EmmySON API - pronounced *emission* - is a JSON parser API, because the world has too many")
-    linkedJavadocs.addAll(
+    linkedJavadoc.addAll(
         "https://docs.oracle.com/javase/9/docs/api/",
-        "https://javadoc.io/doc/org.jetbrains/annotations/23.0.0/",
-        "https://javadoc.io/doc/net.kyori/examination-api/1.3.0/"
+        "https://javadoc.io/static/org.jetbrains/annotations/23.0.0/",
+        "https://javadoc.io/static/net.kyori/examination-api/1.3.0/"
     )
     license {
         name.set("MIT")

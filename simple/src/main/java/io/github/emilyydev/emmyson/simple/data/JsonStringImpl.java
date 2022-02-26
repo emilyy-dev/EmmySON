@@ -21,15 +21,18 @@ package io.github.emilyydev.emmyson.simple.data;
 import io.github.emilyydev.emmyson.data.JsonString;
 import org.jetbrains.annotations.NotNull;
 
-public final class JsonStringImpl implements JsonString {
+public class JsonStringImpl implements JsonString {
 
   private static final long serialVersionUID = -8888634840703976187L;
 
-  public static final JsonString EMPTY = new JsonStringImpl("");
+  public static JsonString emptyOrCreate(final CharSequence str) {
+    final String string = str.toString();
+    return string.isEmpty() ? Empty.INSTANCE : new JsonStringImpl(string);
+  }
 
   private final String string;
 
-  public JsonStringImpl(final String string) {
+  private JsonStringImpl(final String string) {
     this.string = string;
   }
 
@@ -63,5 +66,20 @@ public final class JsonStringImpl implements JsonString {
   @Override
   public String toString() {
     return this.string;
+  }
+
+  private static final class Empty extends JsonStringImpl {
+
+    private static final JsonString INSTANCE = new Empty();
+
+    private static final long serialVersionUID = -5962354202170844585L;
+
+    private Empty() {
+      super("");
+    }
+
+    private Object readResolve() {
+      return INSTANCE;
+    }
   }
 }

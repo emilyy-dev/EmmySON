@@ -131,7 +131,7 @@ public interface DataType<T extends JsonData> extends Examinable, Serializable {
    * {@link Try#isFailure()}.
    *
    * @param jsonData the object to map
-   * @return the resulting {@link Try}
+   * @return the resulting {@linkplain Try}
    */
   default Try<T> map(final JsonData jsonData) {
     return Try.success(jsonData)
@@ -142,17 +142,11 @@ public interface DataType<T extends JsonData> extends Examinable, Serializable {
         )), Try::success);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   default @NotNull String examinableName() {
     return DataType.class.getSimpleName();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   default @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
     return Stream.of(

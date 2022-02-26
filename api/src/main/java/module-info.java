@@ -23,7 +23,7 @@
 //
 
 /**
- *
+ * @uses io.github.emilyydev.emmyson.data.DataFactory
  */
 @SuppressWarnings("requires-transitive-automatic")
 module io.github.emilyydev.emmyson {

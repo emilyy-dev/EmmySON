@@ -29,6 +29,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
+/**
+ * Represents a boolean json value ({@code true}/{@code false} literal values).
+ */
 public interface JsonBoolean extends JsonData {
 
   @Override
@@ -36,6 +39,11 @@ public interface JsonBoolean extends JsonData {
     return DataType.BOOLEAN;
   }
 
+  /**
+   * Gets the
+   *
+   * @return the object's boolean value
+   */
   boolean booleanValue();
 
   @Override

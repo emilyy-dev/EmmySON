@@ -37,8 +37,25 @@ import java.util.stream.Stream;
  */
 public interface JsonData extends Examinable, Serializable {
 
+  /**
+   * Gets this object's type.
+   *
+   * @return this object's json type
+   * @see DataType
+   */
   DataType<? extends JsonData> type();
 
+  /**
+   * Attempts to map this object to the provided type.
+   * <p>
+   * Same as {@link DataType#map(JsonData) type.map(jsonData)}.
+   * </p>
+   *
+   * @param type the data type to map this object to
+   * @param <T>  the data type to map this object to
+   * @return the resulting {@link Try}. See {@link DataType#map(JsonData)}
+   * @see DataType#map(JsonData)
+   */
   default <T extends JsonData> Try<T> as(final DataType<T> type) {
     return type.map(this);
   }

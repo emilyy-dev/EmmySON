@@ -32,16 +32,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public final class JsonObjectImpl extends AbstractMap<JsonString, JsonData> implements JsonObject {
+public class JsonObjectImpl extends AbstractMap<JsonString, JsonData> implements JsonObject {
 
   private static final long serialVersionUID = 2756192412730463825L;
 
-  public static final JsonObject EMPTY = new JsonObjectImpl(Map.of());
+  public static JsonObject empty() {
+    return Empty.INSTANCE;
+  }
+
+  public static JsonObject emptyOrCreate(final Map<JsonString, JsonData> elements) {
+    return elements.isEmpty() ? Empty.INSTANCE : new JsonObjectImpl(elements);
+  }
 
   private final Map<JsonString, JsonData> elements;
-  private volatile EntrySet entrySet = null;
+  private transient volatile EntrySet entrySet = null;
 
-  public JsonObjectImpl(final Map<JsonString, JsonData> elements) {
+  private JsonObjectImpl(final Map<JsonString, JsonData> elements) {
     this.elements = elements;
   }
 
@@ -143,6 +149,21 @@ public final class JsonObjectImpl extends AbstractMap<JsonString, JsonData> impl
     @Override
     public boolean containsAll(final @NotNull Collection<?> c) {
       return this.entrySet.containsAll(c);
+    }
+  }
+
+  private static final class Empty extends JsonObjectImpl {
+
+    private static final long serialVersionUID = 249269091970949547L;
+
+    private static final JsonObject INSTANCE = new Empty();
+
+    private Empty() {
+      super(Map.of());
+    }
+
+    private Object readResolve() {
+      return INSTANCE;
     }
   }
 }

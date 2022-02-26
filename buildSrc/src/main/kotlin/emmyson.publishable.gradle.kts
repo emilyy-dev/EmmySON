@@ -1,5 +1,5 @@
 import io.github.emilyydev.emmyson.conventions.extension.PublicationConfig
-import io.github.emilyydev.emmyson.conventions.extension.impl.PublicationConfigImpl
+import io.github.emilyydev.emmyson.conventions.extension.impl.AbstractPublicationConfig
 
 plugins {
     `maven-publish`
@@ -41,20 +41,26 @@ publishing {
         }
     }
 
-    val publicationConfig = PublicationConfigImpl(repositories, mavenJava, objects.listProperty(String::class))
-    extensions.add(PublicationConfig::class, "publicationConfig", publicationConfig)
+    val publicationConfig = extensions.create(
+        PublicationConfig::class,
+        "publicationConfig",
+        AbstractPublicationConfig::class,
+        repositories,
+        mavenJava
+    )
 
     tasks {
         withType<Javadoc> {
-            inputs.property("publicationConfig.linkedJavadocs", publicationConfig.linkedJavadocs::get)
+            inputs.property("publicationConfig.linkedJavadoc", publicationConfig.linkedJavadoc)
             doFirst {
                 val standardOptions = options as? StandardJavadocDocletOptions ?: return@doFirst
-                standardOptions.links?.addAll(publicationConfig.linkedJavadocs.get())
+                standardOptions.links?.addAll(publicationConfig.linkedJavadoc.get())
             }
         }
     }
 
     signing {
         sign(mavenJava)
+        useGpgCmd()
     }
 }

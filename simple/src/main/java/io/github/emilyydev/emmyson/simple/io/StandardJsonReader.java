@@ -29,21 +29,24 @@ import io.github.emilyydev.emmyson.data.JsonString;
 import io.github.emilyydev.emmyson.exception.JsonParseException;
 import io.github.emilyydev.emmyson.exception.MalformedJsonException;
 import io.github.emilyydev.emmyson.io.JsonReader;
-import io.github.emilyydev.emmyson.simple.Stuff.Escapable;
-import io.github.emilyydev.emmyson.simple.Stuff.Literal;
-import io.github.emilyydev.emmyson.simple.Stuff.Token;
-import io.github.emilyydev.emmyson.simple.Stuff.Whitespace;
+import io.github.emilyydev.emmyson.simple.util.Stuff.Escapable;
+import io.github.emilyydev.emmyson.simple.util.Stuff.Literal;
+import io.github.emilyydev.emmyson.simple.util.Stuff.Token;
+import io.github.emilyydev.emmyson.simple.util.Stuff.Whitespace;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
 import java.nio.CharBuffer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 
-import static io.github.emilyydev.emmyson.simple.CodePointToString.codePointToString;
+import static io.github.emilyydev.emmyson.simple.util.CodePointToString.codePointToString;
 
 public final class StandardJsonReader implements JsonReader {
 
@@ -169,7 +172,7 @@ public final class StandardJsonReader implements JsonReader {
     }
 
     final String result = buffer.toString();
-    return isDecimal ? this.factory.number(Double.parseDouble(result)) : this.factory.number(Long.parseLong(result));
+    return this.factory.number(isDecimal ? new BigDecimal(result, MathContext.UNLIMITED) : new BigInteger(result));
   }
 
   @Override

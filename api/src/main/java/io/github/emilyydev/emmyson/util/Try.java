@@ -350,9 +350,6 @@ public interface Try<T> extends Examinable, Serializable {
    */
   Stream<T> toStream();
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   default @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
     return Stream.of(ExaminableProperty.of("value", fold(identity(), identity()::apply)));

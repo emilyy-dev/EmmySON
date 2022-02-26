@@ -26,18 +26,38 @@ package io.github.emilyydev.emmyson.data;
 
 import net.kyori.examination.ExaminableProperty;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-@Unmodifiable
-public interface JsonArray extends JsonData, List<JsonData> {
+public interface JsonArray extends JsonData {
 
   @Override
   default DataType<JsonArray> type() {
     return DataType.ARRAY;
   }
+
+  int size();
+  JsonData get(int index);
+  JsonArray append(final JsonData jsonData);
+  JsonArray appendAll(final Iterable<? extends JsonData> elements);
+  JsonArray prepend(final JsonData jsonData);
+  JsonArray prependAll(final Iterable<? extends JsonData> elements);
+
+  Stream<JsonData> stream();
+
+  default boolean isEmpty() {
+    return size() == 0;
+  }
+
+  default void forEach(final Consumer<? super JsonData> action) {
+    for (int i = 0; i < size(); ++i) {
+      action.accept(get(i));
+    }
+  }
+
+  List<? extends JsonData> asJavaList();
 
   @Override
   default @NotNull String examinableName() {

@@ -23,9 +23,9 @@ import net.kyori.examination.string.StringExaminer;
 
 public final class JsonNullImpl implements JsonNull {
 
-  private static final long serialVersionUID = 7880251467620939467L;
-
   public static final JsonNull INSTANCE = new JsonNullImpl();
+
+  private static final long serialVersionUID = 7880251467620939467L;
 
   private JsonNullImpl() { }
 
@@ -42,5 +42,9 @@ public final class JsonNullImpl implements JsonNull {
   @Override
   public String toString() {
     return examine(StringExaminer.simpleEscaping());
+  }
+
+  private Object readResolve() {
+    return INSTANCE;
   }
 }

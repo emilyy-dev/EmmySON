@@ -50,7 +50,7 @@ public final class JsonNumberImpl implements JsonNumber {
   public boolean equals(final Object other) {
     if (this == other) { return true; }
     if (!(other instanceof JsonNumber)) { return false; }
-    return Double.compare(this.number.doubleValue(), ((JsonNumber) other).doubleValue()) == 0;
+    return asNumber().equals(((JsonNumber) other).asNumber());
   }
 
   @Override

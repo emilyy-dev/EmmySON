@@ -327,6 +327,12 @@ public interface DataFactory {
   JsonArray arrayOf(Iterable<? extends @Nullable JsonData> elements);
 
   /**
+   * @param elements
+   * @return
+   */
+  JsonArray arrayOf(Stream<? extends @Nullable JsonData> elements);
+
+  /**
    * @return an empty {@link JsonObject}
    */
   JsonObject objectOf();
@@ -355,6 +361,12 @@ public interface DataFactory {
    * @return
    */
   JsonObject objectOf(Iterable<? extends Map.Entry<? extends CharSequence, ? extends @Nullable JsonData>> entries);
+
+  /**
+   * @param entries
+   * @return
+   */
+  JsonObject objectOf(Stream<? extends Map.Entry<? extends CharSequence, ? extends @Nullable JsonData>> entries);
 
   /**
    * @param map

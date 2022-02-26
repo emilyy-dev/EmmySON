@@ -1,7 +1,6 @@
 import com.hierynomus.gradle.license.tasks.LicenseCheck
 import com.hierynomus.gradle.license.tasks.LicenseFormat
 import io.github.emilyydev.emmyson.conventions.extension.LicenseConfig
-import io.github.emilyydev.emmyson.conventions.extension.impl.LicenseConfigImpl
 import nl.javadude.gradle.plugins.license.License
 
 plugins {
@@ -9,23 +8,17 @@ plugins {
     id("com.github.hierynomus.license-base")
 }
 
-val licenseConfig = LicenseConfigImpl(
-    license,
-    objects.fileProperty().convention { file("LICENSE.txt") },
-    objects.fileProperty().convention { file("LICENSE.txt") },
-    objects.property(String::class).convention(providers.provider { "$group/$name" })
-)
-extensions.add(LicenseConfig::class, "licenseConfig", licenseConfig)
+val licenseConfig = extensions.create("licenseConfig", LicenseConfig::class)
+with(licenseConfig) {
+    licenseFile.convention { file("LICENSE.txt") }
+    licenseTarget.convention(provider { "$group/$name" })
+}
 
 license {
+    header = file("LICENSE.txt")
     encoding = Charsets.UTF_8.name()
     mapping("java", "DOUBLESLASH_STYLE")
     include("**/*.java")
-}
-
-fun License.configureLicenseTask() {
-    inputs.property("licenseConfig.licenseHeader", licenseConfig.licenseHeader.asFile::get)
-    conventionMapping("header", licenseConfig.licenseHeader.asFile::get)
 }
 
 tasks {
@@ -45,14 +38,13 @@ tasks {
         dependsOn(licenseCheckAll)
     }
 
-    withType<LicenseCheck> { configureLicenseTask() }
-    withType<LicenseFormat> { configureLicenseTask() }
-
     withType<Jar> {
-        inputs.property("licenseConfig.licenseFile", licenseConfig.licenseFile.asFile::get)
-        inputs.property("licenseConfig.licenseTarget", licenseConfig.licenseTarget::get)
+        inputs.file(licenseConfig.licenseFile)
+        inputs.property("licenseConfig.licenseTarget", licenseConfig.licenseTarget)
+
         metaInf {
             from(licenseConfig.licenseFile) {
+                filteringCharset = Charsets.UTF_8.name()
                 into(licenseConfig.licenseTarget)
             }
         }

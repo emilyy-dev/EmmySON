@@ -27,9 +27,9 @@ import io.github.emilyydev.emmyson.data.JsonNumber;
 import io.github.emilyydev.emmyson.data.JsonObject;
 import io.github.emilyydev.emmyson.data.JsonString;
 import io.github.emilyydev.emmyson.io.JsonWriter;
-import io.github.emilyydev.emmyson.simple.Stuff.Escapable;
-import io.github.emilyydev.emmyson.simple.Stuff.Literal;
-import io.github.emilyydev.emmyson.simple.Stuff.Tokens;
+import io.github.emilyydev.emmyson.simple.util.Stuff.Escapable;
+import io.github.emilyydev.emmyson.simple.util.Stuff.Literal;
+import io.github.emilyydev.emmyson.simple.util.Stuff.Tokens;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

@@ -18,26 +18,35 @@
 
 package io.github.emilyydev.emmyson.test;
 
+import io.github.emilyydev.emmyson.data.DataFactory;
 import io.github.emilyydev.emmyson.data.DataType;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StandardApiTest implements AbstractStandardTest {
+public class StandardApiTest {
+
+  private static DataFactory dataFactory;
+
+  @BeforeAll
+  public static void prepare() {
+    dataFactory = DataFactory.findDataFactory().orElseThrow();
+  }
 
   @Test
   public void api_dataType() {
-    assertSame(DataType.NULL, FACTORY.nil().type());
+    assertSame(DataType.NULL, dataFactory.nil().type());
   }
 
   @Test
   public void api_dataAsType_valid() {
-    assertTrue(FACTORY.nil().as(DataType.NULL).isSuccess());
+    assertTrue(dataFactory.nil().as(DataType.NULL).isSuccess());
   }
 
   @Test
   public void api_dataAsType_invalid() {
-    assertTrue(FACTORY.nil().as(DataType.STRING).isFailure());
+    assertTrue(dataFactory.nil().as(DataType.STRING).isFailure());
   }
 }
