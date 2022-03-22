@@ -19,6 +19,7 @@
 package io.github.emilyydev.emmyson.simple.data;
 
 import io.github.emilyydev.emmyson.data.JsonString;
+import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.NotNull;
 
 public class JsonStringImpl implements JsonString {
@@ -37,35 +38,40 @@ public class JsonStringImpl implements JsonString {
   }
 
   @Override
-  public int length() {
+  public final int length() {
     return this.string.length();
   }
 
   @Override
-  public char charAt(final int index) {
+  public final char charAt(final int index) {
     return this.string.charAt(index);
   }
 
   @Override
-  public @NotNull CharSequence subSequence(final int start, final int end) {
-    return this.string.subSequence(start, end);
+  public final @NotNull JsonString substring(final int start, final int end) {
+    return emptyOrCreate(this.string.substring(start, end));
   }
 
   @Override
-  public boolean equals(final Object other) {
+  public final String asString() {
+    return this.string;
+  }
+
+  @Override
+  public final boolean equals(final Object other) {
     if (this == other) { return true; }
     if (!(other instanceof JsonString)) { return false; }
-    return this.string.equals(((JsonString) other).toString());
+    return this.string.equals(((JsonString) other).asString());
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return this.string.hashCode();
   }
 
   @Override
-  public String toString() {
-    return this.string;
+  public final String toString() {
+    return examine(StringExaminer.simpleEscaping());
   }
 
   private static final class Empty extends JsonStringImpl {

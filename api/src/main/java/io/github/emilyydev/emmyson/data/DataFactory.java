@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -324,7 +325,7 @@ public interface DataFactory {
    * @param elements
    * @return
    */
-  JsonArray arrayOf(Iterable<? extends @Nullable JsonData> elements);
+  JsonArray arrayOf(Collection<? extends @Nullable JsonData> elements);
 
   /**
    * @param elements
@@ -360,7 +361,7 @@ public interface DataFactory {
    * @param entries
    * @return
    */
-  JsonObject objectOf(Iterable<? extends Map.Entry<? extends CharSequence, ? extends @Nullable JsonData>> entries);
+  JsonObject objectOf(Collection<? extends Map.Entry<? extends CharSequence, ? extends @Nullable JsonData>> entries);
 
   /**
    * @param entries

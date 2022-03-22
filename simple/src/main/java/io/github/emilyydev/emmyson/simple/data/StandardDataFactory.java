@@ -31,6 +31,7 @@ import io.github.emilyydev.emmyson.io.JsonReader;
 import io.github.emilyydev.emmyson.io.JsonWriter;
 import io.github.emilyydev.emmyson.simple.io.StandardJsonReader;
 import io.github.emilyydev.emmyson.simple.io.StandardJsonWriter;
+import io.github.emilyydev.emmyson.simple.util.LinkedHashMap;
 import io.github.emilyydev.emmyson.simple.util.LinkedList;
 import io.github.emilyydev.emmyson.util.Try;
 import org.jetbrains.annotations.Contract;
@@ -50,19 +51,15 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Map.entry;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 public final class StandardDataFactory implements DataFactory {
 
@@ -255,24 +252,35 @@ public final class StandardDataFactory implements DataFactory {
   @Override
   public JsonArray arrayOf(final @Nullable JsonData @NotNull ... elements) {
     if (0 == elements.length) {
-      return JsonArrayImpl.empty();
+      return arrayOf();
     } else if (1 == elements.length) {
-      return JsonArrayImpl.emptyOrCreate(LinkedList.single(nullSafe(elements[0])));
+      return arrayOf(elements[0]);
     } else {
-      return JsonArrayImpl.emptyOrCreate(LinkedList.ofAll(elements));
+      return arrayOf(Arrays.stream(elements));
     }
   }
 
   @Override
-  public JsonArray arrayOf(final Iterable<? extends @Nullable JsonData> elements) {
-    return JsonArrayImpl.emptyOrCreate(LinkedList.ofAll(elements));
+  public JsonArray arrayOf(final Collection<? extends @Nullable JsonData> elements) {
+    if (elements instanceof JsonArrayImpl.JavaList) {
+      return ((JsonArrayImpl.JavaList) elements).owningArray;
+    } else if (elements.isEmpty()) {
+      return arrayOf();
+    } else if (1 == elements.size()) {
+      return arrayOf(elements.iterator().next());
+    } else {
+      return arrayOf(elements.stream());
+    }
   }
 
   @Override
   public JsonArray arrayOf(final Stream<? extends @Nullable JsonData> elements) {
-    return JsonArrayImpl.emptyOrCreate(
-        elements.map(StandardDataFactory::nullSafe).collect(collectingAndThen(toList(), LinkedList::ofAll))
-    );
+    return elements.map(StandardDataFactory::nullSafe)
+        .collect(collectingAndThen(
+            collectingAndThen(
+                toList(), LinkedList::ofAll
+            ), JsonArrayImpl::emptyOrCreate
+        ));
   }
 
   @Override
@@ -282,12 +290,12 @@ public final class StandardDataFactory implements DataFactory {
 
   @Override
   public JsonObject objectOf(final CharSequence key, final @Nullable JsonData value) {
-    return JsonObjectImpl.emptyOrCreate(Map.of(string(key), nullSafe(value)));
+    return JsonObjectImpl.emptyOrCreate(LinkedHashMap.single(string(key), nullSafe(value)));
   }
 
   @Override
   public JsonObject objectOf(final Map.Entry<? extends CharSequence, ? extends @Nullable JsonData> entry) {
-    return JsonObjectImpl.emptyOrCreate(Map.of(string(entry.getKey()), nullSafe(entry.getValue())));
+    return objectOf(entry.getKey(), entry.getValue());
   }
 
   @Override
@@ -296,61 +304,56 @@ public final class StandardDataFactory implements DataFactory {
       final Map.Entry<? extends CharSequence, ? extends @Nullable JsonData> @NotNull ... entries
   ) {
     if (0 == entries.length) {
-      return JsonObjectImpl.empty();
+      return objectOf();
     } else if (1 == entries.length) {
-      final Map.Entry<? extends CharSequence, ? extends JsonData> entry = entries[0];
-      return JsonObjectImpl.emptyOrCreate(Map.of(string(entry.getKey()), nullSafe(entry.getValue())));
+      return objectOf(entries[0]);
+    } else {
+      return objectOf(Arrays.stream(entries));
     }
-
-    final LinkedHashMap<JsonString, JsonData> mutable = new LinkedHashMap<>(entries.length);
-    for (final Map.Entry<? extends CharSequence, ? extends JsonData> element : entries) {
-      mutable.put(string(element.getKey()), nullSafe(element.getValue()));
-    }
-    return JsonObjectImpl.emptyOrCreate(unmodifiableMap(mutable));
   }
 
   @Override
+  @SuppressWarnings("RedundantClassCall")
   public JsonObject objectOf(
-      final Iterable<? extends Map.Entry<? extends CharSequence, ? extends @Nullable JsonData>> entries
+      final Collection<? extends Map.Entry<? extends CharSequence, ? extends @Nullable JsonData>> entries
   ) {
-    if (entries instanceof JsonObjectImpl.EntrySet) {
-      return ((JsonObjectImpl.EntrySet) entries).owningMap;
+    // The compiler can't compile 'entries instanceof JsonObjectImpl.JavaMap.EntrySet'
+    // nor '(JsonObjectImpl.JavaMap.EntrySet) entries' because generics
+    if (JsonObjectImpl.JavaMap.EntrySet.class.isInstance(entries)) {
+      return JsonObjectImpl.JavaMap.EntrySet.class.cast(entries).owningMap.owningObject;
+    } else if (entries.isEmpty()) {
+      return objectOf();
+    } else if (1 == entries.size()) {
+      return objectOf(entries.iterator().next());
+    } else {
+      return objectOf(entries.stream());
     }
-
-    final LinkedHashMap<JsonString, JsonData> mutable = entries instanceof Collection
-        ? new LinkedHashMap<>(((Collection<?>) entries).size())
-        : new LinkedHashMap<>();
-    for (final Map.Entry<? extends CharSequence, ? extends JsonData> entry : entries) {
-      mutable.put(string(entry.getKey()), nullSafe(entry.getValue()));
-    }
-
-    return mutable.isEmpty() ? JsonObjectImpl.empty() : JsonObjectImpl.emptyOrCreate(unmodifiableMap(mutable));
   }
 
   @Override
   public JsonObject objectOf(
       final Stream<? extends Map.Entry<? extends CharSequence, ? extends @Nullable JsonData>> entries
   ) {
-    final Map<JsonString, JsonData> map = entries.map(entry ->
-        entry(string(entry.getKey()), nullSafe(entry.getValue()))
-    ).collect(collectingAndThen(
-        toMap(Map.Entry::getKey, Map.Entry::getValue),
-        Collections::unmodifiableMap
-    ));
-
-    return JsonObjectImpl.emptyOrCreate(map);
+    return entries.map(entry -> Map.entry(string(entry.getKey()), nullSafe(entry.getValue())))
+        .collect(collectingAndThen(
+            collectingAndThen(
+                toList(),
+                LinkedHashMap::ofAll
+            ), JsonObjectImpl::emptyOrCreate
+        ));
   }
 
   @Override
+  @SuppressWarnings("RedundantClassCall")
   public JsonObject objectOf(final Map<? extends CharSequence, ? extends @Nullable JsonData> map) {
-    if (map instanceof JsonObject) {
-      return (JsonObject) map;
+    // The compiler can't compile 'entries instanceof JsonObjectImpl.JavaMap'
+    // nor '(JsonObjectImpl.JavaMap) entries' because generics
+    if (JsonObjectImpl.JavaMap.class.isInstance(map)) {
+      return JsonObjectImpl.JavaMap.class.cast(map).owningObject;
     } else if (map.isEmpty()) {
-      return JsonObjectImpl.empty();
+      return objectOf();
+    } else {
+      return objectOf(map.entrySet().stream());
     }
-
-    final LinkedHashMap<JsonString, JsonData> mutable = new LinkedHashMap<>(map.size());
-    map.forEach((name, value) -> mutable.put(string(name), nullSafe(value)));
-    return JsonObjectImpl.emptyOrCreate(unmodifiableMap(mutable));
   }
 }

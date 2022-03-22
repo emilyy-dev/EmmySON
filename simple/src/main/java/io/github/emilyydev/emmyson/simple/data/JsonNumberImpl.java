@@ -21,6 +21,8 @@ package io.github.emilyydev.emmyson.simple.data;
 import io.github.emilyydev.emmyson.data.JsonNumber;
 import net.kyori.examination.string.StringExaminer;
 
+import java.math.BigDecimal;
+
 public final class JsonNumberImpl implements JsonNumber {
 
   private static final long serialVersionUID = 3198988074005737868L;
@@ -47,10 +49,17 @@ public final class JsonNumberImpl implements JsonNumber {
   }
 
   @Override
+  public int compareTo(final JsonNumber that) {
+    return new BigDecimal(asNumber().toString())
+        .compareTo(new BigDecimal(that.asNumber().toString()));
+  }
+
+  @Override
   public boolean equals(final Object other) {
     if (this == other) { return true; }
     if (!(other instanceof JsonNumber)) { return false; }
-    return asNumber().equals(((JsonNumber) other).asNumber());
+    return new BigDecimal(asNumber().toString())
+        .equals(new BigDecimal(((JsonNumber) other).asNumber().toString()));
   }
 
   @Override

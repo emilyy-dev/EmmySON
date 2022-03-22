@@ -29,14 +29,25 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public interface JsonString extends JsonData, CharSequence {
+public interface JsonString extends JsonData, Comparable<JsonString> {
 
   @Override
   default DataType<JsonString> type() {
     return DataType.STRING;
   }
 
-  @Override String toString();
+  int length();
+
+  char charAt(int index);
+
+  JsonString substring(int start, int end);
+
+  String asString();
+
+  @Override
+  default int compareTo(final JsonString that) {
+    return asString().compareTo(that.asString());
+  }
 
   @Override
   default @NotNull String examinableName() {
@@ -47,7 +58,7 @@ public interface JsonString extends JsonData, CharSequence {
   default @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
     return Stream.concat(
         JsonData.super.examinableProperties(),
-        Stream.of(ExaminableProperty.of("value", toString()))
+        Stream.of(ExaminableProperty.of("value", asString()))
     );
   }
 }

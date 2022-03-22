@@ -31,23 +31,50 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-@Unmodifiable
-public interface JsonObject extends JsonData, Map<JsonString, JsonData> {
+public interface JsonObject extends JsonData, Function<JsonString, JsonData> {
 
   @Override
   default DataType<JsonObject> type() {
     return DataType.OBJECT;
   }
 
+  default boolean isEmpty() {
+    return size() == 0;
+  }
+
+  @Override
+  default JsonData apply(final JsonString name) {
+    return getOrJsonNull(name);
+  }
+
+  Optional<JsonData> get(JsonString name);
+
+  JsonObject remove(JsonString name);
+
+  JsonObject withMapping(JsonString name, JsonData data);
+
+  int size();
+
+  @Contract("_ -> !null")
+  JsonData getOrJsonNull(JsonString name);
+
+  default boolean hasKey(final JsonString name) {
+    return get(name).isPresent();
+  }
+
+  @Unmodifiable Map<JsonString, ? extends JsonData> asMap();
+
   @Contract("_, !null -> !null")
   default JsonData getOrElse(final JsonString name, final @Nullable JsonData fallback) {
-    final JsonData data = get(requireNonNull(name, "name"));
-    return null == data ? fallback : data;
+    return get(name).orElse(fallback);
   }
 
   default JsonData getOrElse(
@@ -55,8 +82,11 @@ public interface JsonObject extends JsonData, Map<JsonString, JsonData> {
       final Supplier<? extends @Nullable JsonData> fallbackSupplier
   ) {
     requireNonNull(fallbackSupplier, "fallbackSupplier");
-    final JsonData data = get(requireNonNull(name, "name"));
-    return null == data ? fallbackSupplier.get() : data;
+    return get(name).orElseGet(fallbackSupplier);
+  }
+
+  default void forEach(final BiConsumer<? super JsonString, ? super JsonData> action) {
+    asMap().forEach(action);
   }
 
   @Override
@@ -70,7 +100,7 @@ public interface JsonObject extends JsonData, Map<JsonString, JsonData> {
         JsonData.super.examinableProperties(),
         Stream.of(
             ExaminableProperty.of("size", size()),
-            ExaminableProperty.of("values", entrySet().stream())
+            ExaminableProperty.of("values", asMap().entrySet().stream())
         )
     );
   }

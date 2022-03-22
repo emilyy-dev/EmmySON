@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 /**
  * Represents a boolean json value ({@code true}/{@code false} literal values).
  */
-public interface JsonBoolean extends JsonData {
+public interface JsonBoolean extends JsonData, Comparable<JsonBoolean> {
 
   @Override
   default DataType<JsonBoolean> type() {
@@ -45,6 +45,11 @@ public interface JsonBoolean extends JsonData {
    * @return the object's boolean value
    */
   boolean booleanValue();
+
+  @Override
+  default int compareTo(final JsonBoolean that) {
+    return Boolean.compare(booleanValue(), that.booleanValue());
+  }
 
   @Override
   default @NotNull String examinableName() {

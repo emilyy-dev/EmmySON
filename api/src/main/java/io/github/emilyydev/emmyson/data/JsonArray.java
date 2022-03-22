@@ -26,38 +26,57 @@ package io.github.emilyydev.emmyson.data;
 
 import net.kyori.examination.ExaminableProperty;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
-public interface JsonArray extends JsonData {
+public interface JsonArray extends JsonData, IntFunction<JsonData> {
 
   @Override
   default DataType<JsonArray> type() {
     return DataType.ARRAY;
   }
 
-  int size();
-  JsonData get(int index);
-  JsonArray append(final JsonData jsonData);
-  JsonArray appendAll(final Iterable<? extends JsonData> elements);
-  JsonArray prepend(final JsonData jsonData);
-  JsonArray prependAll(final Iterable<? extends JsonData> elements);
-
-  Stream<JsonData> stream();
-
   default boolean isEmpty() {
     return size() == 0;
   }
 
-  default void forEach(final Consumer<? super JsonData> action) {
-    for (int i = 0; i < size(); ++i) {
-      action.accept(get(i));
-    }
+  @Override
+  default JsonData apply(final int index) {
+    return get(index);
   }
 
-  List<? extends JsonData> asJavaList();
+  int size();
+
+  JsonData get(int index);
+
+  JsonArray remove(int index);
+
+  JsonArray insert(int index, JsonData element);
+
+  JsonArray append(JsonData element);
+
+  JsonArray appendAll(Collection<? extends JsonData> elements);
+
+  JsonArray appendAll(JsonArray elements);
+
+  JsonArray prepend(JsonData element);
+
+  JsonArray prependAll(Collection<? extends JsonData> elements);
+
+  JsonArray prependAll(JsonArray elements);
+
+  Stream<JsonData> stream();
+
+  default void forEach(final Consumer<? super JsonData> action) {
+    stream().forEach(action);
+  }
+
+  @Unmodifiable List<? extends JsonData> asList();
 
   @Override
   default @NotNull String examinableName() {

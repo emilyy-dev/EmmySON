@@ -93,7 +93,7 @@ public final class StandardJsonWriter implements JsonWriter {
   public void write(final JsonString jsonString) throws IOException {
     this.out.write(Tokens.QUOTE);
 
-    final PrimitiveIterator.OfInt iterator = jsonString.chars().iterator();
+    final PrimitiveIterator.OfInt iterator = jsonString.asString().chars().iterator();
     while (iterator.hasNext()) {
       Escapable.writeMatchingOrWrite(iterator.nextInt(), this.out);
     }
@@ -105,7 +105,7 @@ public final class StandardJsonWriter implements JsonWriter {
   public void write(final JsonArray jsonArray) throws IOException {
     this.out.write(Tokens.BEGIN_ARRAY);
 
-    final Iterator<JsonData> iterator = jsonArray.iterator();
+    final Iterator<JsonData> iterator = jsonArray.stream().iterator();
     if (iterator.hasNext()) {
       write(iterator.next());
       while (iterator.hasNext()) {
@@ -121,15 +121,15 @@ public final class StandardJsonWriter implements JsonWriter {
   public void write(final JsonObject jsonObject) throws IOException {
     this.out.write(Tokens.BEGIN_OBJECT);
 
-    final Iterator<Map.Entry<JsonString, JsonData>> iterator = jsonObject.entrySet().iterator();
+    final Iterator<? extends Map.Entry<JsonString, ? extends JsonData>> iterator = jsonObject.asMap().entrySet().iterator();
     if (iterator.hasNext()) {
-      final Map.Entry<JsonString, JsonData> first = iterator.next();
+      final Map.Entry<JsonString, ? extends JsonData> first = iterator.next();
       write(first.getKey());
       this.out.write(Tokens.OBJECT_MAPPER);
       write(first.getValue());
       while (iterator.hasNext()) {
         this.out.write(Tokens.SEPARATOR);
-        final Map.Entry<JsonString, JsonData> entry = iterator.next();
+        final Map.Entry<JsonString, ? extends JsonData> entry = iterator.next();
         write(entry.getKey());
         this.out.write(Tokens.OBJECT_MAPPER);
         write(entry.getValue());

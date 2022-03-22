@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public interface JsonNumber extends JsonData {
+public interface JsonNumber extends JsonData, Comparable<JsonNumber> {
 
   @Override
   default DataType<JsonNumber> type() {
@@ -40,6 +40,9 @@ public interface JsonNumber extends JsonData {
   double doubleValue();
 
   Number asNumber();
+
+  // implementers must override this method as j.l.Number does not implement Comparable<Number>
+  @Override int compareTo(JsonNumber that);
 
   @Override
   default @NotNull String examinableName() {
