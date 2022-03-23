@@ -357,6 +357,7 @@ public interface Try<T> extends Examinable, Serializable {
     return Stream.of(ExaminableProperty.of("value", fold(identity(), identity()::apply)));
   }
 }
+
 // not me
 final class Failure<T> implements Try<T> {
 
