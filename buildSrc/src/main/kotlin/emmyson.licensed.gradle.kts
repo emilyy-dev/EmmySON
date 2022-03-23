@@ -9,7 +9,7 @@ plugins {
 
 val licenseConfig = extensions.create("licenseConfig", LicenseConfig::class)
 with(licenseConfig) {
-    licenseFiles.convention(provider { listOf(file("LICENSE.txt")) })
+    licenseFiles.convention(provider { listOf(layout.projectDirectory.file("LICENSE.txt")) })
     licenseTarget.convention(provider { "$group/$name" })
 }
 

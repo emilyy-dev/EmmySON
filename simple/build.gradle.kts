@@ -17,8 +17,8 @@ fun simpleVersion(): String {
 license.header = file("license-header.txt")
 licenseConfig.licenseFiles.addAll(provider {
     listOf(
-        file("COPYING"),
-        file("COPYING.LESSER")
+        layout.projectDirectory.file("COPYING"),
+        layout.projectDirectory.file("COPYING.LESSER")
     )
 })
 crossdocConfig.linkJavadocFor(project(":emmyson-api"))
