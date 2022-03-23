@@ -357,8 +357,7 @@ public interface Try<T> extends Examinable, Serializable {
     return Stream.of(ExaminableProperty.of("value", fold(identity(), identity()::apply)));
   }
 }
-
-// me
+// not me
 final class Failure<T> implements Try<T> {
 
   private static final long serialVersionUID = -7454118374695196247L;
