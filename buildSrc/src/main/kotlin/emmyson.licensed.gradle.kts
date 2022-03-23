@@ -38,7 +38,7 @@ tasks {
     }
 
     withType<Jar> {
-        inputs.property("licenseConfig.licenseFiles", licenseConfig.licenseFiles)
+        inputs.files(licenseConfig.licenseFiles)
         inputs.property("licenseConfig.licenseTarget", licenseConfig.licenseTarget)
 
         metaInf {
