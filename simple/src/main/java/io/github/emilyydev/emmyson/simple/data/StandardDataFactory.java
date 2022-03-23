@@ -313,15 +313,10 @@ public final class StandardDataFactory implements DataFactory {
   }
 
   @Override
-  @SuppressWarnings("RedundantClassCall")
   public JsonObject objectOf(
       final Collection<? extends Map.Entry<? extends CharSequence, ? extends @Nullable JsonData>> entries
   ) {
-    // The compiler can't compile 'entries instanceof JsonObjectImpl.JavaMap.EntrySet'
-    // nor '(JsonObjectImpl.JavaMap.EntrySet) entries' because generics
-    if (JsonObjectImpl.JavaMap.EntrySet.class.isInstance(entries)) {
-      return JsonObjectImpl.JavaMap.EntrySet.class.cast(entries).owningMap.owningObject;
-    } else if (entries.isEmpty()) {
+    if (entries.isEmpty()) {
       return objectOf();
     } else if (1 == entries.size()) {
       return objectOf(entries.iterator().next());
@@ -344,14 +339,11 @@ public final class StandardDataFactory implements DataFactory {
   }
 
   @Override
-  @SuppressWarnings("RedundantClassCall")
   public JsonObject objectOf(final Map<? extends CharSequence, ? extends @Nullable JsonData> map) {
-    // The compiler can't compile 'entries instanceof JsonObjectImpl.JavaMap'
-    // nor '(JsonObjectImpl.JavaMap) entries' because generics
-    if (JsonObjectImpl.JavaMap.class.isInstance(map)) {
-      return JsonObjectImpl.JavaMap.class.cast(map).owningObject;
-    } else if (map.isEmpty()) {
+    if (map.isEmpty()) {
       return objectOf();
+    } else if (1 == map.size()) {
+      return objectOf(map.entrySet().iterator().next());
     } else {
       return objectOf(map.entrySet().stream());
     }

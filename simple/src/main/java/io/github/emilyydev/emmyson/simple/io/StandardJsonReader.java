@@ -276,7 +276,7 @@ public final class StandardJsonReader implements JsonReader {
     final JsonString name = readString();
     consumeUntil(Token.OBJECT_MAPPER);
     consumeWhitespaces(true);
-    return name.toString();
+    return name.asString();
   }
 
   private void endObject() throws IOException {

@@ -21,6 +21,7 @@ package io.github.emilyydev.emmyson.simple.util;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -273,8 +274,9 @@ final class LinkedHashMap$ {
       this.elements = Map.of(entry.getKey(), entry.getValue());
     }
 
-    @SafeVarargs SingleNode(final Map.Entry<? extends K, ? extends V>... entries) {
-      this.elements = Map.ofEntries(entries);
+    @SafeVarargs
+    SingleNode(final Map.Entry<? extends K, ? extends V>... entries) {
+      this(Arrays.asList(entries));
     }
 
     SingleNode(final Map<? extends K, ? extends V> elements) {
