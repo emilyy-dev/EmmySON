@@ -26,12 +26,14 @@ package io.github.emilyydev.emmyson.util;
 
 import net.kyori.examination.Examinable;
 import net.kyori.examination.ExaminableProperty;
+import net.kyori.examination.string.StringExaminer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -353,5 +355,249 @@ public interface Try<T> extends Examinable, Serializable {
   @Override
   default @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
     return Stream.of(ExaminableProperty.of("value", fold(identity(), identity()::apply)));
+  }
+}
+
+// me
+final class Failure<T> implements Try<T> {
+
+  private static final long serialVersionUID = -7454118374695196247L;
+
+  private static final Set<? extends Class<? extends Error>> NON_RECOVERABLE_ERRORS = Set.of(
+      LinkageError.class,
+      ThreadDeath.class,
+      VirtualMachineError.class
+  );
+
+  private static Throwable assertValidThrowable(final Throwable throwable) {
+    if (NON_RECOVERABLE_ERRORS.stream().anyMatch(clazz -> clazz.isInstance(throwable))) {
+      throw (Error) throwable;
+    } else {
+      return throwable;
+    }
+  }
+
+  private final Throwable throwable;
+
+  Failure(final Throwable throwable) {
+    this.throwable = assertValidThrowable(throwable);
+  }
+
+  @Override
+  public boolean isSuccess() {
+    return false;
+  }
+
+  @Override
+  public boolean isFailure() {
+    return true;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <R> Try<R> flatMap(final Function<? super T, ? extends Try<R>> function) {
+    requireNonNull(function, "function");
+    return (Try<R>) this;
+  }
+
+  @Override
+  public <R> R fold(
+      final Function<? super Throwable, ? extends R> ifFailure,
+      final Throwing.Function<? super T, ? extends R> ifSuccess
+  ) {
+    requireNonNull(ifFailure, "ifFailure");
+    requireNonNull(ifSuccess, "ifSuccess");
+    return ifFailure.apply(this.throwable);
+  }
+
+  @Override
+  public Try<T> tryConsume(final Throwing.Consumer<? super T> consumer) {
+    requireNonNull(consumer, "consumer");
+    return this;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <R> Try<R> tryMap(final Throwing.Function<? super T, ? extends R> function) {
+    requireNonNull(function, "function");
+    return (Try<R>) this;
+  }
+
+  @Override
+  public Try<T> tryFilter(final Throwing.Predicate<? super T> predicate) {
+    requireNonNull(predicate, "predicate");
+    return this;
+  }
+
+  @Override
+  public T getOrThrow() {
+    return Throwing.sneakyThrow(this.throwable);
+  }
+
+  @Override
+  public T getOrThrow(final Supplier<? extends Throwable> exceptionSupplier) {
+    requireNonNull(exceptionSupplier, "exceptionSupplier");
+    return Throwing.sneakyThrow(exceptionSupplier.get());
+  }
+
+  @Override
+  public T getOrElse(final @Nullable T fallback) {
+    return fallback;
+  }
+
+  @Override
+  public T getOrElseGet(final Supplier<? extends @Nullable T> fallbackSupplier) {
+    requireNonNull(fallbackSupplier, "fallbackSupplier");
+    return fallbackSupplier.get();
+  }
+
+  @Override
+  public Optional<T> toOptional() {
+    return Optional.empty();
+  }
+
+  @Override
+  public Stream<T> toStream() {
+    return Stream.empty();
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (this == other) { return true; }
+    if (null == other || getClass() != other.getClass()) { return false; }
+    return this.throwable.equals(((Failure<?>) other).throwable);
+  }
+
+  @Override
+  public int hashCode() {
+    return this.throwable.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return examine(StringExaminer.simpleEscaping());
+  }
+}
+
+final class Success<T> implements Try<T> {
+
+  static final Success<Void> VOID_SUCCESS = new Success<>(null);
+
+  private static final long serialVersionUID = -877155561245586683L;
+
+  private final T value;
+
+  Success(final T value) {
+    this.value = value;
+  }
+
+  @Override
+  public boolean isSuccess() {
+    return true;
+  }
+
+  @Override
+  public boolean isFailure() {
+    return false;
+  }
+
+  @Override
+  public <R> Try<R> flatMap(final Function<? super T, ? extends Try<R>> function) {
+    requireNonNull(function, "function");
+    return function.apply(this.value);
+  }
+
+  @Override
+  public <R> R fold(
+      final Function<? super Throwable, ? extends R> ifFailure,
+      final Throwing.Function<? super T, ? extends R> ifSuccess
+  ) {
+    requireNonNull(ifFailure, "ifFailure");
+    requireNonNull(ifSuccess, "ifSuccess");
+    try {
+      return ifSuccess.tryApply(this.value);
+    } catch (final Throwable throwable) {
+      return ifFailure.apply(throwable);
+    }
+  }
+
+  @Override
+  public Try<T> tryConsume(final Throwing.Consumer<? super T> consumer) {
+    requireNonNull(consumer, "consumer");
+    try {
+      consumer.tryAccept(this.value);
+      return this;
+    } catch (final Throwable throwable) {
+      return Try.failure(throwable);
+    }
+  }
+
+  @Override
+  public <R> Try<R> tryMap(final Throwing.Function<? super T, ? extends R> function) {
+    requireNonNull(function, "function");
+    try {
+      return Try.success(function.tryApply(this.value));
+    } catch (final Throwable throwable) {
+      return Try.failure(throwable);
+    }
+  }
+
+  @Override
+  public Try<T> tryFilter(final Throwing.Predicate<? super T> predicate) {
+    requireNonNull(predicate, "predicate");
+    try {
+      return predicate.tryTest(this.value) ? this : Try.failure(new AssertionError());
+    } catch (final Throwable throwable) {
+      return Try.failure(throwable);
+    }
+  }
+
+  @Override
+  public T getOrThrow() {
+    return this.value;
+  }
+
+  @Override
+  public T getOrThrow(final Supplier<? extends Throwable> exceptionSupplier) {
+    requireNonNull(exceptionSupplier, "exceptionSupplier");
+    return this.value;
+  }
+
+  @Override
+  public T getOrElse(final @Nullable T fallback) {
+    return this.value;
+  }
+
+  @Override
+  public T getOrElseGet(final Supplier<? extends @Nullable T> fallbackSupplier) {
+    requireNonNull(fallbackSupplier, "fallbackSupplier");
+    return this.value;
+  }
+
+  @Override
+  public Optional<T> toOptional() {
+    return Optional.of(this.value);
+  }
+
+  @Override
+  public Stream<T> toStream() {
+    return Stream.of(this.value);
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (this == other) { return true; }
+    if (null == other || getClass() != other.getClass()) { return false; }
+    return this.value.equals(((Success<?>) other).value);
+  }
+
+  @Override
+  public int hashCode() {
+    return this.value.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return examine(StringExaminer.simpleEscaping());
   }
 }

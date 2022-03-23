@@ -46,18 +46,13 @@ abstract class AbstractMultiReleaseConfig
         )
 
         with(tasks) {
-            // add license check for new source set
-            named("check") {
-                dependsOn("licenseJava$version")
-            }
-
             // set language version for the generated class files
             named(newSourceSet.compileJavaTaskName, JavaCompile::class.java) {
                 options.release.set(version)
             }
 
-            // mark jar as multi-release and add new source set output to the corresponding version location
-            withType(Jar::class.java) {
+            // mark main jar as multi-release and add new source set output to the corresponding version location
+            named(JavaPlugin.JAR_TASK_NAME, Jar::class.java) {
                 metaInf {
                     manifest.attributes[Attributes.Name.MULTI_RELEASE.toString()] = true
                     from(newSourceSet.output) {

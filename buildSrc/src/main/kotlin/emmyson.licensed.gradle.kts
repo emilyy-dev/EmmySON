@@ -21,15 +21,17 @@ license {
 }
 
 tasks {
-    register("licenseFormatAll") {
-        withType<LicenseFormat>().forEach {
-            finalizedBy(it)
+    val licenseFormatAll by registering(DefaultTask::class)
+    withType<LicenseFormat>().all {
+        licenseFormatAll {
+            dependsOn(this@all)
         }
     }
 
-    val licenseCheckAll by registering(DefaultTask::class) {
-        withType<LicenseCheck>().forEach {
-            finalizedBy(it)
+    val licenseCheckAll by registering(DefaultTask::class)
+    withType<LicenseCheck>().all {
+        licenseCheckAll {
+            dependsOn(this@all)
         }
     }
 
