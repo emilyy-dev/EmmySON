@@ -1,10 +1,11 @@
 package io.github.emilyydev.emmyson.conventions.extension
 
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import java.io.File
 
 interface LicenseConfig {
 
-    val licenseFile: RegularFileProperty
+    val licenseFiles: ListProperty<File>
     val licenseTarget: Property<String>
 }

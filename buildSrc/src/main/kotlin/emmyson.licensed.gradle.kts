@@ -1,7 +1,6 @@
 import com.hierynomus.gradle.license.tasks.LicenseCheck
 import com.hierynomus.gradle.license.tasks.LicenseFormat
 import io.github.emilyydev.emmyson.conventions.extension.LicenseConfig
-import nl.javadude.gradle.plugins.license.License
 
 plugins {
     id("emmyson.common")
@@ -10,7 +9,7 @@ plugins {
 
 val licenseConfig = extensions.create("licenseConfig", LicenseConfig::class)
 with(licenseConfig) {
-    licenseFile.convention { file("LICENSE.txt") }
+    licenseFiles.convention(provider { listOf(file("LICENSE.txt")) })
     licenseTarget.convention(provider { "$group/$name" })
 }
 
@@ -39,13 +38,13 @@ tasks {
     }
 
     withType<Jar> {
-        inputs.file(licenseConfig.licenseFile)
+        inputs.property("licenseConfig.licenseFiles", licenseConfig.licenseFiles)
         inputs.property("licenseConfig.licenseTarget", licenseConfig.licenseTarget)
 
         metaInf {
-            from(licenseConfig.licenseFile) {
+            into(licenseConfig.licenseTarget) {
                 filteringCharset = Charsets.UTF_8.name()
-                into(licenseConfig.licenseTarget)
+                from(licenseConfig.licenseFiles)
             }
         }
     }
