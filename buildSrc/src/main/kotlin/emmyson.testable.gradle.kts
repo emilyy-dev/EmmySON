@@ -1,31 +1,31 @@
 plugins {
-    id("emmyson.licensed")
-    jacoco
-    id("me.champeau.jmh")
+  id("emmyson.licensed")
+  jacoco
+  id("me.champeau.jmh")
 }
 
 tasks {
-    compileTestJava {
-        options.release.set(JavaVersion.current().ordinal)
-    }
+  compileTestJava {
+    options.release.set(JavaVersion.current().ordinal)
+  }
 
-    compileJmhJava {
-        options.release.set(JavaVersion.current().ordinal)
-    }
+  compileJmhJava {
+    options.release.set(JavaVersion.current().ordinal)
+  }
 
-    test {
-        finalizedBy(jacocoTestReport)
-    }
+  test {
+    finalizedBy(jacocoTestReport)
+  }
 }
 
 jmh {
-    resultFormat.set("CSV")
+  resultFormat.set("CSV")
 }
 
 testing {
-    suites {
-        named<JvmTestSuite>("test") {
-            useJUnitJupiter()
-        }
+  suites {
+    named<JvmTestSuite>("test") {
+      useJUnitJupiter()
     }
+  }
 }

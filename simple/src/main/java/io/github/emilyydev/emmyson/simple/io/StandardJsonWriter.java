@@ -121,7 +121,8 @@ public final class StandardJsonWriter implements JsonWriter {
   public void write(final JsonObject jsonObject) throws IOException {
     this.out.write(Tokens.BEGIN_OBJECT);
 
-    final Iterator<? extends Map.Entry<JsonString, ? extends JsonData>> iterator = jsonObject.asMap().entrySet().iterator();
+    final Iterator<? extends Map.Entry<JsonString, ? extends JsonData>> iterator =
+        jsonObject.asMap().entrySet().iterator();
     if (iterator.hasNext()) {
       final Map.Entry<JsonString, ? extends JsonData> first = iterator.next();
       write(first.getKey());

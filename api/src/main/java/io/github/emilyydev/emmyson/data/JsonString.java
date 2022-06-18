@@ -29,6 +29,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
+/**
+ * A {@link JsonString} is a {@link JsonData} that represents a string.
+ */
 public interface JsonString extends JsonData, Comparable<JsonString> {
 
   @Override
@@ -36,12 +39,38 @@ public interface JsonString extends JsonData, Comparable<JsonString> {
     return DataType.STRING;
   }
 
+  /**
+   * Returns the length of this JSON string.
+   *
+   * @return the length of this string
+   */
   int length();
 
+  /**
+   * Returns the character at the specified index.
+   *
+   * @param index the index of the character
+   * @return the character at the specified index
+   * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= length())
+   */
   char charAt(int index);
 
+  /**
+   * Returns a substring of this JSON string.
+   *
+   * @param start the beginning index, inclusive
+   * @param end   the ending index, exclusive
+   * @return a substring of this JSON string
+   * @throws IndexOutOfBoundsException if the start or end index is out of range
+   *                                   (start < 0 || start >= length() || end < 0 || end > length())
+   */
   JsonString substring(int start, int end);
 
+  /**
+   * Returns the string value of this JSON string.
+   *
+   * @return the string value of this JSON string
+   */
   String asString();
 
   @Override

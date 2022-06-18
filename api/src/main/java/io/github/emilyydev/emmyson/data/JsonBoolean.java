@@ -40,9 +40,9 @@ public interface JsonBoolean extends JsonData, Comparable<JsonBoolean> {
   }
 
   /**
-   * Gets the
+   * Returns the boolean value of this {@code JsonBoolean}.
    *
-   * @return the object's boolean value
+   * @return the boolean value of this {@code JsonBoolean}
    */
   boolean booleanValue();
 

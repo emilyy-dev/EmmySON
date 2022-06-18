@@ -46,8 +46,6 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 
-import static io.github.emilyydev.emmyson.simple.util.CodePointToString.codePointToString;
-
 public final class StandardJsonReader implements JsonReader {
 
   private static JsonParseException asJsonParseException(final IOException exception) {
@@ -64,8 +62,8 @@ public final class StandardJsonReader implements JsonReader {
 
   private static JsonParseException expectedTokenButGot(final int hint, final int read, final String at) {
     return new JsonParseException(
-        "Expected token '" + codePointToString(hint) + "' at " + at
-        + ", got '" + codePointToString(read) + "' instead"
+        "Expected token '" + Character.toString(hint) + "' at " + at +
+        ", got '" + Character.toString(read) + "' instead"
     );
   }
 
@@ -125,6 +123,7 @@ public final class StandardJsonReader implements JsonReader {
   public JsonNull readNull() throws IOException {
     final String result = readMany(4).toString();
     if (Literal.NULL.equals(result)) { return this.factory.nil(); }
+
     throw new JsonParseException("Expected 'null' at " + at() + ", got '" + result + '\'');
   }
 
@@ -134,16 +133,19 @@ public final class StandardJsonReader implements JsonReader {
     for (int i = 0; i < 4; ++i) {
       final int read = readNext();
       if (Token.UNKNOWN.hint == read) { throw reachedEndOfStream(); }
+
       buffer.appendCodePoint(read);
     }
 
     if (Literal.TRUE.equals(buffer.toString())) { return this.factory.bool(true); }
+
     final int read = readNext();
     if (Token.UNKNOWN.hint == read) { throw reachedEndOfStream(); }
-    buffer.appendCodePoint(read);
 
+    buffer.appendCodePoint(read);
     final String result = buffer.toString();
     if (Literal.FALSE.equals(result)) { return this.factory.bool(false); }
+
     throw new JsonParseException("Expected a boolean value at " + at() + ", got '" + result + "' instead");
   }
 
@@ -201,7 +203,7 @@ public final class StandardJsonReader implements JsonReader {
           buffer.appendCodePoint(readCodePoint());
         } else if (!Escapable.readMatching(control, buffer)) {
           throw new JsonParseException(
-              "Expected control character at " + at() + ", got '" + codePointToString(control) + "' instead"
+              "Expected control character at " + at() + ", got '" + Character.toString(control) + "' instead"
           );
         }
 
@@ -253,8 +255,9 @@ public final class StandardJsonReader implements JsonReader {
   @Override
   public JsonArray readArray() throws IOException {
     beginArray();
-    final ArrayList<JsonData> list = new ArrayList<>();
+    final var list = new ArrayList<JsonData>();
     while (hasNextElement()) { list.add(read()); }
+
     endArray();
     return this.factory.arrayOf(list);
   }
@@ -292,8 +295,9 @@ public final class StandardJsonReader implements JsonReader {
   @Override
   public JsonObject readObject() throws IOException {
     beginObject();
-    final LinkedHashMap<String, JsonData> map = new LinkedHashMap<>();
+    final var map = new LinkedHashMap<String, JsonData>();
     while (hasNextElement()) { map.put(nextName(), read()); }
+
     endObject();
     return this.factory.objectOf(map);
   }
@@ -367,8 +371,8 @@ public final class StandardJsonReader implements JsonReader {
     final int read = readNext();
     if (until.hint != read) {
       throw new JsonParseException(
-          "Expected separator '" + codePointToString(until.hint) + "' at " + at()
-          + ", got '" + codePointToString(read) + "' instead"
+          "Expected separator '" + Character.toString(until.hint) + "' at " + at() +
+          ", got '" + Character.toString(read) + "' instead"
       );
     }
   }
@@ -381,6 +385,7 @@ public final class StandardJsonReader implements JsonReader {
       if (Token.UNKNOWN.hint != readNext()) {
         throw new MalformedJsonException("Expected end of stream to be reached");
       }
+
       reset();
     } finally {
       this.in.close();

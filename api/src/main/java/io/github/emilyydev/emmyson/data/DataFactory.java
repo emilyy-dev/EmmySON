@@ -56,7 +56,7 @@ public interface DataFactory {
    * @return a data factory... maybe
    */
   static Optional<DataFactory> findDataFactory() {
-    return ServiceLoader.load(DataFactory.class, DataFactory.class.getClassLoader()).findFirst();
+    return ServiceLoader.load(DataFactory.class).findFirst();
   }
 
   /**
@@ -66,13 +66,13 @@ public interface DataFactory {
    * @return a stream of providers
    */
   static Stream<ServiceLoader.Provider<DataFactory>> streamFactories() {
-    return ServiceLoader.load(DataFactory.class, DataFactory.class.getClassLoader()).stream();
+    return ServiceLoader.load(DataFactory.class).stream();
   }
 
   /**
    * Attempts to read serialized json from the given string as the provided data type.
    *
-   * @param in   the json string to attempt to read
+   * @param json the json string to attempt to read
    * @param type the expected data type the serialized data will be attempted to be read as
    * @param <T>  the expected java class representing the deserialized data type
    * @return a {@link Try} object. If the data was parsed and read successfully, it will be a {@code Success} and will
@@ -82,12 +82,12 @@ public interface DataFactory {
    * @see Try#isFailure()
    * @see Try#fold(Function, Throwing.Function)
    */
-  <T extends JsonData> Try<T> read(String in, DataType<T> type);
+  <T extends JsonData> Try<T> read(String json, DataType<T> type);
 
   /**
    * Attempts to read json from the given file as the provided data type.
    *
-   * @param in   the json string to attempt to read
+   * @param file the json string to attempt to read
    * @param type the expected data type the serialized data will be attempted to be read as
    * @param <T>  the expected java class representing the deserialized data type
    * @return a {@link Try} object. If the data was parsed and read successfully, it will be a {@code Success} and will
@@ -97,12 +97,12 @@ public interface DataFactory {
    * @see Try#isFailure()
    * @see Try#fold(Function, Throwing.Function)
    */
-  <T extends JsonData> Try<T> read(File in, DataType<T> type);
+  <T extends JsonData> Try<T> read(File file, DataType<T> type);
 
   /**
    * Attempts to read json from the file pointed by the given path as the provided data type.
    *
-   * @param in   the json string to attempt to read
+   * @param path the json string to attempt to read
    * @param type the expected data type the serialized data will be attempted to be read as
    * @param <T>  the expected java class representing the deserialized data type
    * @return a {@link Try} object. If the data was parsed and read successfully, it will be a {@code Success} and will
@@ -112,10 +112,13 @@ public interface DataFactory {
    * @see Try#isFailure()
    * @see Try#fold(Function, Throwing.Function)
    */
-  <T extends JsonData> Try<T> read(Path in, DataType<T> type);
+  <T extends JsonData> Try<T> read(Path path, DataType<T> type);
 
   /**
    * Attempts to read json from the given input stream as the provided data type.
+   * <p>
+   * The provided input stream will <b>not</b> be closed by EmmySON.
+   * </p>
    *
    * @param in   the json string to attempt to read
    * @param type the expected data type the serialized data will be attempted to be read as
@@ -131,6 +134,9 @@ public interface DataFactory {
 
   /**
    * Attempts to read json from the given readable source as the provided data type.
+   * <p>
+   * The provided readable will <b>not</b> be closed by EmmySON if it implements {@link java.io.Closeable Closeable}.
+   * </p>
    *
    * @param in   the json string to attempt to read
    * @param type the expected data type the serialized data will be attempted to be read as
@@ -147,29 +153,29 @@ public interface DataFactory {
   /**
    * Creates a new json reader to parse the serialized json in the given string.
    *
-   * @param in the serialized json data to parse
+   * @param json the serialized json data to parse
    * @return a new reader to parse the provided string
    * @throws IOException if any kind of IO error occurs
    */
-  JsonReader createReader(String in) throws IOException;
+  JsonReader createReader(String json) throws IOException;
 
   /**
    * Creates a new json reader to parse the json in the given file.
    *
-   * @param in the file containing the json to parse
+   * @param file the file containing the json to parse
    * @return a new reader to parse the contents of the given file
    * @throws IOException if any kind of IO error occurs
    */
-  JsonReader createReader(File in) throws IOException;
+  JsonReader createReader(File file) throws IOException;
 
   /**
    * Creates a new json reader to parse the json in the file pointed by the given path.
    *
-   * @param in the file path containing the json to parse
+   * @param path the file path containing the json to parse
    * @return a new reader to parse the contents of the given file path
    * @throws IOException if any kind of IO error occurs
    */
-  JsonReader createReader(Path in) throws IOException;
+  JsonReader createReader(Path path) throws IOException;
 
   /**
    * Creates a new json reader to parse the json provided by the given input stream.
@@ -190,18 +196,18 @@ public interface DataFactory {
   JsonReader createReader(Readable in) throws IOException;
 
   /**
-   * @param out
+   * @param file
    * @param data
    * @return
    */
-  Optional<IOException> write(File out, JsonData data);
+  Optional<IOException> write(File file, JsonData data);
 
   /**
-   * @param out
+   * @param path
    * @param data
    * @return
    */
-  Optional<IOException> write(Path out, JsonData data);
+  Optional<IOException> write(Path path, JsonData data);
 
   /**
    * @param out
@@ -218,18 +224,18 @@ public interface DataFactory {
   Optional<IOException> write(Appendable out, JsonData data);
 
   /**
-   * @param out
+   * @param file
    * @return
    * @throws IOException
    */
-  JsonWriter createWriter(File out) throws IOException;
+  JsonWriter createWriter(File file) throws IOException;
 
   /**
-   * @param out
+   * @param path
    * @return
    * @throws IOException
    */
-  JsonWriter createWriter(Path out) throws IOException;
+  JsonWriter createWriter(Path path) throws IOException;
 
   /**
    * @param out

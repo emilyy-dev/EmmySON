@@ -26,6 +26,9 @@ package io.github.emilyydev.emmyson.data;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A JsonNull object represents the null value.
+ */
 public interface JsonNull extends JsonData {
 
   @Override

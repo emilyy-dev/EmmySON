@@ -42,6 +42,16 @@ final class ReadableReader extends Reader {
   }
 
   @Override
+  public int read(final @NotNull CharBuffer target) throws IOException {
+    return this.in.read(target);
+  }
+
+  @Override
+  public int read(final char @NotNull [] buff) throws IOException {
+    return this.in.read(CharBuffer.wrap(buff));
+  }
+
+  @Override
   public void close() throws IOException {
     this.closeableIn.close();
   }

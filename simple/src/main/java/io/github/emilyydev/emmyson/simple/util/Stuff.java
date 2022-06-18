@@ -129,6 +129,21 @@ public interface Stuff {
     }
   }
 
+  enum HtmlEscapable {
+    QUOTE('"'),
+    AMPERSAND('&'),
+    GREATER_THAN('>'),
+    LESS_THAN('>');
+
+    private static final HtmlEscapable[] HTML_ESCAPABLES = values();
+
+    private final int codePoint;
+
+    HtmlEscapable(final int codePoint) {
+      this.codePoint = codePoint;
+    }
+  }
+
   enum Escapable {
     QUOTE('"'),
     BACKSLASH('\\'),
@@ -142,6 +157,13 @@ public interface Stuff {
     private static final Escapable[] ESCAPABLES = values(); // adjectives don't have a plural counterpart but...
 
     public static void writeMatchingOrWrite(final int codePoint, final Writer out) throws IOException {
+      for (final HtmlEscapable escapable : HtmlEscapable.HTML_ESCAPABLES) {
+        if (escapable.codePoint == codePoint) {
+          writeEscapedCodePoint(codePoint, out);
+          return;
+        }
+      }
+
       for (final Escapable escapable : ESCAPABLES) {
         if (escapable.codePoint == codePoint) {
           out.write(BACKSLASH.codePoint);

@@ -29,6 +29,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
+/**
+ * Represents a JSON number.
+ */
 public interface JsonNumber extends JsonData, Comparable<JsonNumber> {
 
   @Override
@@ -36,9 +39,31 @@ public interface JsonNumber extends JsonData, Comparable<JsonNumber> {
     return DataType.NUMBER;
   }
 
+  /**
+   * Returns the value of this number as a {@code long}.
+   *
+   * @return the value of this number as a {@code long}
+   * @apiNote This method may be lossy, prefer {@link #asNumber()}.
+   * @see #asNumber()
+   */
   long longValue();
+
+  /**
+   * Returns the value of this number as a {@code double}.
+   *
+   * @return the value of this number as a {@code double}
+   * @apiNote This method may be lossy, prefer {@link #asNumber()}.
+   * @see #asNumber()
+   */
   double doubleValue();
 
+  /**
+   * Returns the value of this number as a {@code Number}.
+   * This method should be preferred and the result handled appropriately if the value is known to not fit in a
+   * {@code long} or a {@code double} (e.g. checking if it's an instanceof {@code BigInteger} or {@code BigDecimal}).
+   *
+   * @return the value of this number as a {@code Number}
+   */
   Number asNumber();
 
   // implementers must override this method as j.l.Number does not implement Comparable<Number>

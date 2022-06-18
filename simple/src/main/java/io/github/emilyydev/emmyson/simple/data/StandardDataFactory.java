@@ -39,9 +39,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -75,23 +74,23 @@ public final class StandardDataFactory implements DataFactory {
   }
 
   @Override
-  public <T extends JsonData> Try<T> read(final String in, final DataType<T> type) {
-    return read(new StringReader(in), type);
+  public <T extends JsonData> Try<T> read(final String json, final DataType<T> type) {
+    return read(new StringReader(json), type);
   }
 
   @Override
-  public <T extends JsonData> Try<T> read(final File in, final DataType<T> type) {
-    try {
-      return read(new InputStreamReader(new FileInputStream(in), StandardCharsets.UTF_8), type);
-    } catch (final FileNotFoundException exception) {
+  public <T extends JsonData> Try<T> read(final File file, final DataType<T> type) {
+    try (final var reader = new FileReader(file, StandardCharsets.UTF_8)) {
+      return read(reader, type);
+    } catch (final IOException exception) {
       return Try.failure(exception);
     }
   }
 
   @Override
   public <T extends JsonData> Try<T> read(final Path in, final DataType<T> type) {
-    try {
-      return read(Files.newBufferedReader(in, StandardCharsets.UTF_8), type);
+    try (final var reader = Files.newBufferedReader(in)) {
+      return read(reader, type);
     } catch (final IOException exception) {
       return Try.failure(exception);
     }
@@ -104,26 +103,26 @@ public final class StandardDataFactory implements DataFactory {
 
   @Override
   public <T extends JsonData> Try<T> read(final Readable in, final DataType<T> type) {
-    try (final JsonReader reader = createReader(in)) {
-      return reader.read().as(type);
+    try {
+      return createReader(in).read().as(type);
     } catch (final IOException exception) {
       return Try.failure(exception);
     }
   }
 
   @Override
-  public JsonReader createReader(final String in) {
-    return createReader(new StringReader(in));
+  public JsonReader createReader(final String json) {
+    return createReader(new StringReader(json));
   }
 
   @Override
-  public JsonReader createReader(final File in) throws IOException {
-    return createReader(new InputStreamReader(new FileInputStream(in), StandardCharsets.UTF_8));
+  public JsonReader createReader(final File file) throws IOException {
+    return createReader(new FileReader(file, StandardCharsets.UTF_8));
   }
 
   @Override
   public JsonReader createReader(final Path in) throws IOException {
-    return createReader(Files.newBufferedReader(in, StandardCharsets.UTF_8));
+    return createReader(Files.newBufferedReader(in));
   }
 
   @Override
@@ -137,18 +136,18 @@ public final class StandardDataFactory implements DataFactory {
   }
 
   @Override
-  public Optional<IOException> write(final File out, final JsonData data) {
-    try {
-      return write(new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8), data);
-    } catch (final FileNotFoundException exception) {
+  public Optional<IOException> write(final File file, final JsonData data) {
+    try (final var writer = new FileWriter(file, StandardCharsets.UTF_8)) {
+      return write(writer, data);
+    } catch (final IOException exception) {
       return Optional.of(exception);
     }
   }
 
   @Override
-  public Optional<IOException> write(final Path out, final JsonData data) {
-    try {
-      return write(Files.newBufferedWriter(out, StandardCharsets.UTF_8), data);
+  public Optional<IOException> write(final Path path, final JsonData data) {
+    try (final var writer = Files.newBufferedWriter(path)) {
+      return write(writer, data);
     } catch (final IOException exception) {
       return Optional.of(exception);
     }
@@ -161,8 +160,8 @@ public final class StandardDataFactory implements DataFactory {
 
   @Override
   public Optional<IOException> write(final Appendable out, final JsonData data) {
-    try (final JsonWriter writer = createWriter(out)) {
-      writer.write(data);
+    try {
+      createWriter(out).write(data);
       return Optional.empty();
     } catch (final IOException exception) {
       return Optional.of(exception);
@@ -170,13 +169,13 @@ public final class StandardDataFactory implements DataFactory {
   }
 
   @Override
-  public JsonWriter createWriter(final File out) throws IOException {
-    return createWriter(new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8));
+  public JsonWriter createWriter(final File file) throws IOException {
+    return createWriter(new FileWriter(file, StandardCharsets.UTF_8));
   }
 
   @Override
-  public JsonWriter createWriter(final Path out) throws IOException {
-    return createWriter(Files.newBufferedWriter(out, StandardCharsets.UTF_8));
+  public JsonWriter createWriter(final Path path) throws IOException {
+    return createWriter(Files.newBufferedWriter(path));
   }
 
   @Override

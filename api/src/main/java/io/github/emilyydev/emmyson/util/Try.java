@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -103,7 +102,19 @@ public interface Try<T> extends Examinable, Serializable {
    */
   @Contract("_ -> new")
   static <T> Try<T> failure(final Throwable throwable) {
-    return new Failure<>(requireNonNull(throwable, "throwable"));
+    return new Failure<>(nonFatal(throwable));
+  }
+
+  private static Throwable nonFatal(final Throwable throwable) {
+    if (
+        throwable instanceof LinkageError
+        || throwable instanceof ThreadDeath
+        || throwable instanceof VirtualMachineError
+    ) {
+      throw (Error) throwable;
+    } else {
+      return requireNonNull(throwable, "throwable");
+    }
   }
 
   /**
@@ -363,24 +374,10 @@ final class Failure<T> implements Try<T> {
 
   private static final long serialVersionUID = -7454118374695196247L;
 
-  private static final Set<? extends Class<? extends Error>> NON_RECOVERABLE_ERRORS = Set.of(
-      LinkageError.class,
-      ThreadDeath.class,
-      VirtualMachineError.class
-  );
-
-  private static Throwable assertValidThrowable(final Throwable throwable) {
-    if (NON_RECOVERABLE_ERRORS.stream().anyMatch(clazz -> clazz.isInstance(throwable))) {
-      throw (Error) throwable;
-    } else {
-      return throwable;
-    }
-  }
-
   private final Throwable throwable;
 
   Failure(final Throwable throwable) {
-    this.throwable = assertValidThrowable(throwable);
+    this.throwable = throwable;
   }
 
   @Override

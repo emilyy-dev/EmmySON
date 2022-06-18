@@ -40,8 +40,46 @@ final class AppendableWriter extends Writer {
   }
 
   @Override
-  public void write(final char @NotNull [] buffer, final int off, final int len) throws IOException {
-    this.out.append(CharBuffer.wrap(buffer, off, len), off, off + len);
+  public void write(final char @NotNull [] buff, final int off, final int len) throws IOException {
+    this.out.append(CharBuffer.wrap(buff, off, len), off, off + len);
+  }
+
+  @Override
+  public void write(final int c) throws IOException {
+    this.out.append((char) c);
+  }
+
+  @Override
+  public void write(final char @NotNull [] buff) throws IOException {
+    this.out.append(CharBuffer.wrap(buff));
+  }
+
+  @Override
+  public void write(final @NotNull String str) throws IOException {
+    this.out.append(str);
+  }
+
+  @Override
+  public void write(final @NotNull String str, final int off, final int len) throws IOException {
+    this.out.append(str, off, len);
+  }
+
+  @Override
+  public Writer append(final CharSequence csq) throws IOException {
+    this.out.append(csq);
+    return this;
+  }
+
+  @Override
+  public Writer append(final CharSequence csq, final int start, final int end) throws IOException {
+    this.out.append(csq, start, end);
+    return this;
+  }
+
+  @Override
+  public Writer append(final char c) throws IOException {
+    this.out.append(c);
+    return this;
   }
 
   @Override

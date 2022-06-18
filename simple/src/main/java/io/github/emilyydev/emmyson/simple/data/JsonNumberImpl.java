@@ -50,7 +50,7 @@ public final class JsonNumberImpl implements JsonNumber {
 
   @Override
   public int compareTo(final JsonNumber that) {
-    return new BigDecimal(asNumber().toString())
+    return new BigDecimal(this.number.toString())
         .compareTo(new BigDecimal(that.asNumber().toString()));
   }
 
@@ -58,7 +58,7 @@ public final class JsonNumberImpl implements JsonNumber {
   public boolean equals(final Object other) {
     if (this == other) { return true; }
     if (!(other instanceof JsonNumber)) { return false; }
-    return new BigDecimal(asNumber().toString())
+    return new BigDecimal(this.number.toString())
         .equals(new BigDecimal(((JsonNumber) other).asNumber().toString()));
   }
 

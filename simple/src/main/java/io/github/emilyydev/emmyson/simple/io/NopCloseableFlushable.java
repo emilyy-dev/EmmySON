@@ -25,9 +25,14 @@ final class NopCloseableFlushable implements Closeable, Flushable {
 
   static final NopCloseableFlushable INSTANCE = new NopCloseableFlushable();
 
-  private NopCloseableFlushable() { }
+  private NopCloseableFlushable() {
+  }
 
-  @Override public void close() { }
+  @Override
+  public void close() {
+  }
 
-  @Override public void flush() { }
+  @Override
+  public void flush() {
+  }
 }
