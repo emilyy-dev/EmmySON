@@ -103,8 +103,8 @@ public final class StandardDataFactory implements DataFactory {
 
   @Override
   public <T extends JsonData> Try<T> read(final Readable in, final DataType<T> type) {
-    try {
-      return createReader(in).read().as(type);
+    try (final var reader = createReader(in)) {
+      return reader.read().as(type);
     } catch (final IOException exception) {
       return Try.failure(exception);
     }
@@ -160,8 +160,8 @@ public final class StandardDataFactory implements DataFactory {
 
   @Override
   public Optional<IOException> write(final Appendable out, final JsonData data) {
-    try {
-      createWriter(out).write(data);
+    try (final var writer = createWriter(out)) {
+      writer.write(data);
       return Optional.empty();
     } catch (final IOException exception) {
       return Optional.of(exception);

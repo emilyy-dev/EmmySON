@@ -1,5 +1,7 @@
 rootProject.name = "emmyson"
 
+includeBuild("build-logic")
+
 sequenceOf(
   "api",
   "simple"

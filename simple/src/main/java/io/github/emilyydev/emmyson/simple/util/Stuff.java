@@ -135,8 +135,6 @@ public interface Stuff {
     GREATER_THAN('>'),
     LESS_THAN('>');
 
-    private static final HtmlEscapable[] HTML_ESCAPABLES = values();
-
     private final int codePoint;
 
     HtmlEscapable(final int codePoint) {
@@ -155,9 +153,10 @@ public interface Stuff {
     TAB('\t', 't');
 
     private static final Escapable[] ESCAPABLES = values(); // adjectives don't have a plural counterpart but...
+    private static final HtmlEscapable[] HTML_ESCAPABLES = HtmlEscapable.values();
 
     public static void writeMatchingOrWrite(final int codePoint, final Writer out) throws IOException {
-      for (final HtmlEscapable escapable : HtmlEscapable.HTML_ESCAPABLES) {
+      for (final HtmlEscapable escapable : HTML_ESCAPABLES) {
         if (escapable.codePoint == codePoint) {
           writeEscapedCodePoint(codePoint, out);
           return;

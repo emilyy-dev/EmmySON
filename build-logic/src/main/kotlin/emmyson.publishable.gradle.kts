@@ -52,8 +52,10 @@ publishing {
   tasks {
     withType<Javadoc> {
       inputs.property("publicationConfig.linkedJavadoc", publicationConfig.linkedJavadoc)
+
+      val standardOptions = options as? StandardJavadocDocletOptions ?: return@withType
+      standardOptions.tags("apiNote")
       doFirst {
-        val standardOptions = options as? StandardJavadocDocletOptions ?: return@doFirst
         standardOptions.links?.addAll(publicationConfig.linkedJavadoc.get())
       }
     }

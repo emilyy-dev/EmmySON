@@ -51,7 +51,7 @@ public interface JsonString extends JsonData, Comparable<JsonString> {
    *
    * @param index the index of the character
    * @return the character at the specified index
-   * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= length())
+   * @throws IndexOutOfBoundsException if the index is out of range (index &lt; 0 || index >= length())
    */
   char charAt(int index);
 
@@ -62,7 +62,7 @@ public interface JsonString extends JsonData, Comparable<JsonString> {
    * @param end   the ending index, exclusive
    * @return a substring of this JSON string
    * @throws IndexOutOfBoundsException if the start or end index is out of range
-   *                                   (start < 0 || start >= length() || end < 0 || end > length())
+   *                                   (start &lt; 0 || start >= length() || end &lt; 0 || end > length())
    */
   JsonString substring(int start, int end);
 

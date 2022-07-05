@@ -71,7 +71,7 @@ public interface JsonArray extends JsonData, IntFunction<JsonData> {
    *
    * @param index the index of the {@code JsonData} to return
    * @return the {@code JsonData} at the specified index
-   * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size())
+   * @throws IndexOutOfBoundsException if the index is out of range (index &lt; 0 || index >= size())
    */
   JsonData get(int index);
 
@@ -80,7 +80,7 @@ public interface JsonArray extends JsonData, IntFunction<JsonData> {
    *
    * @param index the index of the element to be removed
    * @return a new {@code JsonArray} with the element at the specified index removed
-   * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size())
+   * @throws IndexOutOfBoundsException if the index is out of range (index &lt; 0 || index >= size())
    */
   JsonArray remove(int index);
 
@@ -90,7 +90,7 @@ public interface JsonArray extends JsonData, IntFunction<JsonData> {
    * @param index the index at which the given element is to be inserted
    * @param element the element to be inserted
    * @return a new {@code JsonArray} with the given element inserted at the specified index
-   * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index > size())
+   * @throws IndexOutOfBoundsException if the index is out of range (index &lt; 0 || index > size())
    * @throws NullPointerException if the given element is null
    */
   JsonArray insert(int index, JsonData element);
